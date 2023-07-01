@@ -1,0 +1,4 @@
+../Core/Src/Funcoes_uSD.c:22:9:SD_Criar_Arquivo	24	static
+../Core/Src/Funcoes_uSD.c:44:9:SD_Criar_Diretorio	24	static
+../Core/Src/Funcoes_uSD.c:60:9:SD_Ler_Arquivo	24	static
+../Core/Src/Funcoes_uSD.c:81:9:SD_Escrever_Arquivo	24	static
