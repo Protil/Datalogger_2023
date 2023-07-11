@@ -202,7 +202,7 @@ int main(void)
 				sent = 18446744073709551615U;
 			}
 
-	    	send_info_CAN(hfdcan1, 12, 63);
+	    	send_info_CAN(hfdcan1, 12, sent);
 
 	    }
 
