@@ -113,39 +113,27 @@ uint32_t number_of_bytes_to_ST_notation(uint8_t num_of_bytes)
 	switch (num_of_bytes)
 	{
 	case 0:
-		return 0x00000000U;
+		return FDCAN_DLC_BYTES_0;
 	case 1:
-		return 0x00010000U;
+		return FDCAN_DLC_BYTES_1;
 	case 2:
-		return 0x00020000U;
+		return FDCAN_DLC_BYTES_2;
 	case 3:
-		return 0x00030000U;
+		return FDCAN_DLC_BYTES_3;
 	case 4:
-		return 0x00040000U;
+		return FDCAN_DLC_BYTES_4;
 	case 5:
-		return 0x00050000U;
+		return FDCAN_DLC_BYTES_5;
 	case 6:
-		return 0x00060000U;
+		return FDCAN_DLC_BYTES_6;
 	case 7:
-		return 0x00070000U;
+		return FDCAN_DLC_BYTES_7;
 	case 8:
-		return 0x00080000U;
-	case 12:
-		return 0x00090000U;
-	case 16:
-		return 0x000A0000U;
-	case 20:
-		return 0x000B0000U;
-	case 24:
-		return 0x000C0000U;
-	case 32:
-		return 0x000D0000U;
-	case 48:
-		return 0x000E0000U;
-	case 64:
-		return 0x000F0000U;
+		return FDCAN_DLC_BYTES_8;
 	default:
-		return 0x00000000U;
+		// Não é a melhor forma de se lidar com o erro de usar mais bytes do que a CAN suporta
+		Error_Handler();
+		return HAL_ERROR;
 	}
 }
 
@@ -153,40 +141,28 @@ uint8_t ST_notation_to_number_of_bytes(uint32_t ST_notation)
 {
 	switch (ST_notation)
 	{
-	case 0x00000000U:
+	case FDCAN_DLC_BYTES_0:
 		return 0;
-	case 0x00010000U:
+	case FDCAN_DLC_BYTES_1:
 		return 1;
-	case 0x00020000U:
+	case FDCAN_DLC_BYTES_2:
 		return 2;
-	case 0x00030000U:
+	case FDCAN_DLC_BYTES_3:
 		return 3;
-	case 0x00040000U:
+	case FDCAN_DLC_BYTES_4:
 		return 4;
-	case 0x00050000U:
+	case FDCAN_DLC_BYTES_5:
 		return 5;
-	case 0x00060000U:
+	case FDCAN_DLC_BYTES_6:
 		return 6;
-	case 0x00070000U:
+	case FDCAN_DLC_BYTES_7:
 		return 7;
-	case 0x00080000U:
+	case FDCAN_DLC_BYTES_8:
 		return 8;
-	case 0x00090000U:
-		return 12;
-	case 0x000A0000U:
-		return 16;
-	case 0x000B0000U:
-		return 20;
-	case 0x000C0000U:
-		return 24;
-	case 0x000D0000U:
-		return 32;
-	case 0x000E0000U:
-		return 48;
-	case 0x000F0000U:
-		return 64;
 	default:
-		return 0;
+		// Não é a melhor forma de se lidar com o erro de usar mais bytes do que a CAN suporta
+		Error_Handler();
+		return HAL_ERROR;
 	}
 }
 
