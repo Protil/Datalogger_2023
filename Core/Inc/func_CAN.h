@@ -14,11 +14,16 @@
 
 // BEGIN Funções de Escrita
 
-	void send_info_CAN(FDCAN_HandleTypeDef hfdcan, uint8_t id, uint64_t value);
+	void send_message_CAN_positive(FDCAN_HandleTypeDef hfdcan, uint8_t id, uint64_t value);
+	void send_message_CAN_negative(FDCAN_HandleTypeDef hfdcan, uint8_t id, int64_t value);
 
 	void uint64_to_array_of_uint8(uint8_t *bytes, uint64_t value, uint8_t number_of_bytes);
 
 	uint8_t minimum_number_of_bytes_to_represent_value(uint64_t value);
+
+	// Normal Byte Size = 1,2,4,8
+	uint8_t minimum_normal_number_byte_size(uint64_t num);
+
 
 	void configure_message_header(FDCAN_TxHeaderTypeDef *TxHeader, uint8_t id, uint8_t num_of_bytes);
 

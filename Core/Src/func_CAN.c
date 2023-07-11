@@ -12,7 +12,7 @@
 
 // BEGIN Funções de Escrita
 
-void send_info_CAN(FDCAN_HandleTypeDef hfdcan, uint8_t id, uint64_t value)
+void send_message_CAN_positive(FDCAN_HandleTypeDef hfdcan, uint8_t id, uint64_t value)
 {
 	uint8_t TxData[8] = {0};
 	FDCAN_TxHeaderTypeDef TxHeader;
@@ -29,6 +29,35 @@ void send_info_CAN(FDCAN_HandleTypeDef hfdcan, uint8_t id, uint64_t value)
   }
 }
 
+void send_message_CAN_negative(FDCAN_HandleTypeDef hfdcan, uint8_t id, int64_t value)
+{
+	uint8_t TxData[8] = {0};
+	FDCAN_TxHeaderTypeDef TxHeader;
+    uint8_t number_of_bytes;
+
+    // Caso o valor seja negativo é necessario inverter-lo para a contagem de bytes
+    // Caso isso não seja feito todo numero negativo retornara 8 bytes
+    if (value < 0)
+    {
+    	number_of_bytes = minimum_normal_number_byte_size(-value);
+    }
+    else
+    {
+    	number_of_bytes = minimum_normal_number_byte_size(value);
+    }
+
+    uint64_to_array_of_uint8(TxData, value, number_of_bytes);
+	configure_message_header(&TxHeader, id, number_of_bytes);
+
+  // Boa pratica colocar dentro de um if (eu acho)
+  if (HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan, &TxHeader, TxData)!= HAL_OK)
+  {
+	Error_Handler();
+  }
+}
+
+
+
 // Função feita com base em https://www.educative.io/answers/how-to-convert-an-integer-into-a-specific-byte-array-in-cpp
 void uint64_to_array_of_uint8(uint8_t *bytes, uint64_t value, uint8_t number_of_bytes)
 {
@@ -38,16 +67,16 @@ void uint64_to_array_of_uint8(uint8_t *bytes, uint64_t value, uint8_t number_of_
   }
 }
 
-uint8_t minimum_number_of_bytes_to_represent_value(uint64_t num)
+uint8_t minimum_number_of_bytes_to_represent_value(uint64_t value)
 {
     uint8_t number_of_bytes = 0;
 
-    uint64_t copy_number = num;
+    uint64_t copy_value = value;
 
     // Desloca o numero de 8 em 8 bits até alcançar 0 e assim saber o tamanho minimo de bytes que pode representar o valor
-    while (copy_number != 0)
+    while (copy_value != 0)
     {
-    	copy_number >>= 8;
+    	copy_value >>= 8;
         number_of_bytes++;
     }
 
@@ -58,6 +87,46 @@ uint8_t minimum_number_of_bytes_to_represent_value(uint64_t num)
     }
 
     return number_of_bytes;
+}
+
+uint8_t minimum_normal_number_byte_size(uint64_t value)
+{
+    uint8_t numBytes = 0;
+
+    uint64_t copy_value = value;
+
+    // Desloca o numero de 8 em 8 bits até alcançar 0 e assim saber o tamanho minimo de bytes que pode representar o valor
+    while (copy_value != 0)
+    {
+    	copy_value >>= 8;
+        numBytes++;
+    }
+
+    // Garante que o numero de bytes retornado será o padrão de 1, 2, 4 ou 8
+    if(numBytes != 1 && numBytes != 2 && numBytes != 4 && numBytes != 8)
+    {
+    	if (numBytes < 1)
+    	{
+    		numBytes = 1;
+    	}
+        if(numBytes < 2)
+        {
+            numBytes = 2;
+        }
+        else if(numBytes < 4)
+        {
+            numBytes = 4;
+        }
+        else if (numBytes < 8)
+        {
+            numBytes = 8;
+        }
+        else
+        {
+            Error_Handler();
+        }
+    }
+    return numBytes;
 }
 
 void configure_message_header(FDCAN_TxHeaderTypeDef *TxHeader, uint8_t id, uint8_t num_of_bytes)

@@ -68,12 +68,11 @@ uint8_t               RxData[8];
 
 uint32_t randomNumber;
 
-uint64_t sent;
+int64_t sent;
 
 uint8_t number_of_bytes_received;
-uint64_t received;
 
-
+int64_t receive;
 
 // Ignorar, será uma das funções de leitura no futuro
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
@@ -97,7 +96,22 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
     }
 
     number_of_bytes_received = ST_notation_to_number_of_bytes(RxHeader.DataLength);
-    received = array_of_uint8_to_uint64(RxData, number_of_bytes_received);
+
+    switch(number_of_bytes_received)
+    {
+		case 1:
+			receive = (int8_t)array_of_uint8_to_uint64(RxData, number_of_bytes_received);
+			break;
+		case 2:
+			receive = (int16_t)array_of_uint8_to_uint64(RxData, number_of_bytes_received);
+			break;
+		case 4:
+			receive = (int32_t)array_of_uint8_to_uint64(RxData, number_of_bytes_received);
+			break;
+		case 8:
+			receive = (int64_t)array_of_uint8_to_uint64(RxData, number_of_bytes_received);
+			break;
+    }
   }
 }
 
@@ -158,59 +172,54 @@ int main(void)
 
 
 	    // Gera um numero aleatorio que define o tamanho do pacote que será enviado
-	    // O numero enviado deveria ser aleatorio também, devido a preguiça ele só é o maior numero de cada byte
+	    // O numero enviado é uma potencia de 2 mais 1 menos 1 e depois invertemos o sinal, primeiro:
+	    // -((2**7)-1),
+	    // -((2**15)-1)
+	    // ...
+	    // -((2**63)-1)
 	    if (HAL_RNG_GenerateRandomNumber(&rngHandle, &randomNumber) == HAL_OK)
 	    {
 	    	if (randomNumber < (UINT32_MAX /8))
 			{
-	    		sent = 255;
-
+	    		sent = -127;
 			}
 			else if (randomNumber < (UINT32_MAX /8 * 2))
 			{
-				sent = 65535;
-
+				sent = -32767;
 			}
 			else if (randomNumber < (UINT32_MAX /8 * 3))
 			{
-				sent = 16777215;
-
+				sent = -8388607;
 			}
 			else if (randomNumber < (UINT32_MAX /8 * 4))
 			{
-				sent = 4294967295;
-
+				sent = -2147483647;
 			}
 			else if (randomNumber < (UINT32_MAX /8 * 5))
 			{
-				sent = 1099511627775;
-
+				sent = -549755813887;
 			}
 			else if (randomNumber < (UINT32_MAX /8 * 6))
 			{
-				sent = 281474976710655;
-
+				sent = -140737488355327;
 			}
 			else if (randomNumber < (UINT32_MAX /8 * 7))
 			{
-				sent = 72057594037927935;
-
+				sent = -36028797018963967;
 			}
 			else if (randomNumber < (UINT32_MAX /8 * 8))
 			{
-				// Um warning de que o numero será forcadamente um unsigned é dado, então já estabeleço que ele é unsigned
-				sent = 18446744073709551615U;
+				sent = -9223372036854775807;
 			}
 
-	    	send_info_CAN(hfdcan1, 12, sent);
-
+	    	send_message_CAN_negative(hfdcan1, 12, sent);
 	    }
 
 	  // Luz usada só para saber que loop está acontecendo
 	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_6);
 
 
-      HAL_Delay (1000);
+      HAL_Delay (250);
   }
   /* USER CODE END 3 */
 }
