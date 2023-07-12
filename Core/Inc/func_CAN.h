@@ -22,6 +22,8 @@
 
 	void uint64_to_array_of_uint8(uint8_t *bytes, uint64_t value, uint8_t number_of_bytes);
 
+	uint64_t array_of_uint16_to_uint64(uint16_t *lista, uint8_t size);
+
 	uint8_t minimum_number_of_bytes_to_represent_value(uint64_t value);
 
 	// Normal Byte Size = 1,2,4,8
@@ -37,6 +39,9 @@
 // BEGIN Funções de Leitura
 
 	uint64_t array_of_uint8_to_uint64(uint8_t *bytes, uint8_t num_of_bytes);
+
+	void uint64_to_array_of_uint16(uint16_t *lista, uint8_t size, uint64_t value);
+
 
 // END Funções de Leitura
 

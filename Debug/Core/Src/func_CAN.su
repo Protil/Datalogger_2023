@@ -2,9 +2,11 @@
 ../Core/Src/func_CAN.c:33:6:send_message_CAN_negative	72	static
 ../Core/Src/func_CAN.c:60:6:send_message_CAN_double	88	static
 ../Core/Src/func_CAN.c:94:6:uint64_to_array_of_uint8	40	static
-../Core/Src/func_CAN.c:102:9:minimum_number_of_bytes_to_represent_value	32	static
-../Core/Src/func_CAN.c:124:9:minimum_normal_number_byte_size	32	static
-../Core/Src/func_CAN.c:164:6:configure_message_header	24	static
-../Core/Src/func_CAN.c:186:10:array_of_uint8_to_uint64	64	static
-../Core/Src/func_CAN.c:212:10:number_of_bytes_to_ST_notation	16	static
-../Core/Src/func_CAN.c:241:9:ST_notation_to_number_of_bytes	16	static
+../Core/Src/func_CAN.c:102:10:array_of_uint16_to_uint64	64	static
+../Core/Src/func_CAN.c:119:6:uint64_to_array_of_uint16	40	static
+../Core/Src/func_CAN.c:127:9:minimum_number_of_bytes_to_represent_value	32	static
+../Core/Src/func_CAN.c:149:9:minimum_normal_number_byte_size	32	static
+../Core/Src/func_CAN.c:189:6:configure_message_header	24	static
+../Core/Src/func_CAN.c:211:10:array_of_uint8_to_uint64	64	static
+../Core/Src/func_CAN.c:237:10:number_of_bytes_to_ST_notation	16	static
+../Core/Src/func_CAN.c:266:9:ST_notation_to_number_of_bytes	16	static

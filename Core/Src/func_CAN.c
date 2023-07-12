@@ -99,6 +99,31 @@ void uint64_to_array_of_uint8(uint8_t *bytes, uint64_t value, uint8_t number_of_
   }
 }
 
+uint64_t array_of_uint16_to_uint64(uint16_t *lista, uint8_t size)
+{
+    uint64_t total = 0;
+
+    uint64_t copy_of_byte_to_uint64;
+
+
+    for(int i = 0; i < size; i++)
+    {
+        copy_of_byte_to_uint64 = lista[i];
+
+        total += copy_of_byte_to_uint64 << ((size - i - 1) * 16);
+    }
+
+    return total;
+}
+
+void uint64_to_array_of_uint16(uint16_t *lista, uint8_t size, uint64_t value)
+{
+    for(int i = 0; i < size; i++)
+    {
+        lista[i] = value >> ((size - i - 1) * 16) & 0xFFFF;
+    }
+}
+
 uint8_t minimum_number_of_bytes_to_represent_value(uint64_t value)
 {
     uint8_t number_of_bytes = 0;

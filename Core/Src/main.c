@@ -72,7 +72,7 @@ int64_t sent;
 
 uint8_t number_of_bytes_received;
 
-double receive;
+uint16_t receive[4];
 
 // Ignorar, será uma das funções de leitura no futuro
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
@@ -97,8 +97,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 
     number_of_bytes_received = ST_notation_to_number_of_bytes(RxHeader.DataLength);
 
-	receive = (double)(int64_t)array_of_uint8_to_uint64(RxData, number_of_bytes_received)/10000;
-
+    uint64_to_array_of_uint16(receive, number_of_bytes_received/2, array_of_uint8_to_uint64(RxData, number_of_bytes_received));
   }
 }
 
@@ -165,44 +164,29 @@ int main(void)
 	    // ...
 	    // -((2**63)-1)
 
+	    uint16_t lista[4];
 
-	    if (HAL_RNG_GenerateRandomNumber(&rngHandle, &randomNumber) == HAL_OK)
-	    {
-	    	if (randomNumber < (UINT32_MAX /8))
-			{
-	    		sent = -127;
-			}
-			else if (randomNumber < (UINT32_MAX /8 * 2))
-			{
-				sent = -32767;
-			}
-			else if (randomNumber < (UINT32_MAX /8 * 3))
-			{
-				sent = -8388607;
-			}
-			else if (randomNumber < (UINT32_MAX /8 * 4))
-			{
-				sent = -2147483647;
-			}
-			else if (randomNumber < (UINT32_MAX /8 * 5))
-			{
-				sent = -549755813887;
-			}
-			else if (randomNumber < (UINT32_MAX /8 * 6))
-			{
-				sent = -140737488355327;
-			}
-			else if (randomNumber < (UINT32_MAX /8 * 7))
-			{
-				sent = -36028797018963967;
-			}
-			else if (randomNumber < (UINT32_MAX /8 * 8))
-			{
-				sent = -9223372036854775807;
-			}
+	    uint64_t value;
 
-	    	send_message_CAN_double(hfdcan1, 12, -312.3123, 4);
-	    }
+
+	    uint16_t info1 = 1233;
+	    uint16_t info2 = 2;
+	    uint16_t info3 = 6634;
+	    uint16_t info4 = 1000;
+
+	    lista[0] = info1;
+	    lista[1] = info2;
+	    lista[2] = info3;
+	    lista[3] = info4;
+
+
+	    value = array_of_uint16_to_uint64(lista, 4);
+
+
+
+
+	   send_message_CAN_positive(hfdcan1, 12, value);
+
 
 	  // Luz usada só para saber que loop está acontecendo
 	  HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_6);
