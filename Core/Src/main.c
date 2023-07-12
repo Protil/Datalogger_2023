@@ -72,7 +72,7 @@ int64_t sent;
 
 uint8_t number_of_bytes_received;
 
-int64_t receive;
+double receive;
 
 // Ignorar, será uma das funções de leitura no futuro
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
@@ -97,21 +97,8 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 
     number_of_bytes_received = ST_notation_to_number_of_bytes(RxHeader.DataLength);
 
-    switch(number_of_bytes_received)
-    {
-		case 1:
-			receive = (int8_t)array_of_uint8_to_uint64(RxData, number_of_bytes_received);
-			break;
-		case 2:
-			receive = (int16_t)array_of_uint8_to_uint64(RxData, number_of_bytes_received);
-			break;
-		case 4:
-			receive = (int32_t)array_of_uint8_to_uint64(RxData, number_of_bytes_received);
-			break;
-		case 8:
-			receive = (int64_t)array_of_uint8_to_uint64(RxData, number_of_bytes_received);
-			break;
-    }
+	receive = (double)(int64_t)array_of_uint8_to_uint64(RxData, number_of_bytes_received)/10000;
+
   }
 }
 
@@ -177,6 +164,8 @@ int main(void)
 	    // -((2**15)-1)
 	    // ...
 	    // -((2**63)-1)
+
+
 	    if (HAL_RNG_GenerateRandomNumber(&rngHandle, &randomNumber) == HAL_OK)
 	    {
 	    	if (randomNumber < (UINT32_MAX /8))
@@ -212,7 +201,7 @@ int main(void)
 				sent = -9223372036854775807;
 			}
 
-	    	send_message_CAN_negative(hfdcan1, 12, sent);
+	    	send_message_CAN_double(hfdcan1, 12, -312.3123, 4);
 	    }
 
 	  // Luz usada só para saber que loop está acontecendo

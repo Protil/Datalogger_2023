@@ -16,6 +16,9 @@
 
 	void send_message_CAN_positive(FDCAN_HandleTypeDef hfdcan, uint8_t id, uint64_t value);
 	void send_message_CAN_negative(FDCAN_HandleTypeDef hfdcan, uint8_t id, int64_t value);
+	void send_message_CAN_double(FDCAN_HandleTypeDef hfdcan, uint8_t id, double double_value, uint8_t power_of_10);
+
+
 
 	void uint64_to_array_of_uint8(uint8_t *bytes, uint64_t value, uint8_t number_of_bytes);
 

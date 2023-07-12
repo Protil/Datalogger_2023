@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 
+#include <math.h>
 
 // BEGIN Funções de Escrita
 
@@ -46,6 +47,37 @@ void send_message_CAN_negative(FDCAN_HandleTypeDef hfdcan, uint8_t id, int64_t v
     	number_of_bytes = minimum_normal_number_byte_size(value);
     }
 
+    uint64_to_array_of_uint8(TxData, value, number_of_bytes);
+	configure_message_header(&TxHeader, id, number_of_bytes);
+
+  // Boa pratica colocar dentro de um if (eu acho)
+  if (HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan, &TxHeader, TxData)!= HAL_OK)
+  {
+	Error_Handler();
+  }
+}
+
+void send_message_CAN_double(FDCAN_HandleTypeDef hfdcan, uint8_t id, double double_value, uint8_t power_of_10)
+{
+	uint8_t TxData[8] = {0};
+	FDCAN_TxHeaderTypeDef TxHeader;
+    uint8_t number_of_bytes;
+
+    int64_t value = (double_value * pow(10, power_of_10));
+
+    // Caso o valor seja negativo é necessario inverter-lo para a contagem de bytes
+    // Caso isso não seja feito todo numero negativo retornara 8 bytes
+    if (value < 0)
+    {
+    	number_of_bytes = minimum_normal_number_byte_size(-value);
+    }
+    else
+    {
+    	number_of_bytes = minimum_normal_number_byte_size(value);
+    }
+
+
+    number_of_bytes = 8;
     uint64_to_array_of_uint8(TxData, value, number_of_bytes);
 	configure_message_header(&TxHeader, id, number_of_bytes);
 
